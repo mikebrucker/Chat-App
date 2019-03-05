@@ -5,10 +5,12 @@ const Schema = mongoose.Schema;
 const UserSchema = new Schema({
   name: {
     type: String,
+    max: 40,
     required: true
   },
   username: {
     type: String,
+    max: 25,
     required: true
   },
   email: {

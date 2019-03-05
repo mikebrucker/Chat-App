@@ -13,6 +13,7 @@ const MessageSchema = new Schema({
   },
   text: {
     type: String,
+    max: 2000,
     required: true
   },
   name: {
