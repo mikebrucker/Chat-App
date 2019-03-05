@@ -7,6 +7,28 @@ const ChatroomSchema = new Schema({
     type: String,
     required: true
   },
+  messages: [
+    {
+      text: {
+        type: String,
+        max: 2000,
+        required: true
+      },
+      name: {
+        type: String
+      },
+      username: {
+        type: String
+      },
+      avatar: {
+        type: String
+      },
+      date: {
+        type: Date,
+        default: Date.now
+      }
+    }
+  ],
   date: {
     type: Date,
     default: Date.now

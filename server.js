@@ -5,7 +5,6 @@ const passport = require("passport");
 const path = require("path");
 
 const users = require("./routes/api/users");
-const messages = require("./routes/api/messages");
 const chatroom = require("./routes/api/chatroom");
 
 const app = express();
@@ -31,7 +30,6 @@ require("./config/passport")(passport);
 
 // Use Routes
 app.use("/api/users", users);
-app.use("/api/messages", messages);
 app.use("/api/chatroom", chatroom);
 
 // Server static assets if in production

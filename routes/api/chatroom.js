@@ -1,14 +1,13 @@
 const express = require("express");
 const router = express.Router();
-const mongoose = require("mongoose");
 const passport = require("passport");
 
-// Load models
+// Load Chatroom model
 const Chatroom = require("../../models/Chatroom");
-const Message = require("../../models/Message");
 
 // Validation
 const validateChatroomInput = require("../../validation/create-chatroom");
+const validateMessageInput = require("../../validation/create-message");
 
 // @route 	GET api/chatroom/test
 // @desc 		tests chatroom route
@@ -20,7 +19,6 @@ router.get("/test", (req, res) => res.json({ test: "chatroom route success" }));
 // @access 	Public
 router.get("/id/:id", (req, res) => {
   const errors = {};
-  const myChatroom = {};
 
   Chatroom.findById(req.params.id)
     .then(chatroom => {
@@ -28,15 +26,8 @@ router.get("/id/:id", (req, res) => {
         errors.nochatroom = "No Chatroom Exists With That ID";
         res.status(404).json(errors);
       }
-      myChatroom.chatroom = chatroom;
 
-      Message.find({ chatroom: chatroom._id })
-        .sort({ date: -1 })
-        .then(feed => {
-          myChatroom.messages = feed;
-          res.json(myChatroom);
-        })
-        .catch(err => res.status(404).json(err));
+      res.json(chatroom);
     })
     .catch(err => res.status(404).json(err));
 });
@@ -46,7 +37,6 @@ router.get("/id/:id", (req, res) => {
 // @access 	Public
 router.get("/:name", (req, res) => {
   const errors = {};
-  const myChatroom = {};
 
   Chatroom.findOne({ name: req.params.name })
     .then(chatroom => {
@@ -54,15 +44,8 @@ router.get("/:name", (req, res) => {
         errors.nochatroom = "No Chatroom Exists With That Name";
         res.status(404).json(errors);
       }
-      myChatroom.chatroom = chatroom;
 
-      Message.find({ chatroom: chatroom._id })
-        .sort({ date: -1 })
-        .then(feed => {
-          myChatroom.messages = feed;
-          res.json(myChatroom);
-        })
-        .catch(err => res.status(404).json(err));
+      res.json(chatroom);
     })
     .catch(err => res.status(404).json(err));
 });
@@ -92,6 +75,40 @@ router.post(
         });
 
         newChatroom.save().then(chatroom => res.json(chatroom));
+      }
+    });
+  }
+);
+
+// @route 	POST api/chatroom/message/:chatroomname
+// @desc 		Create Message in a chatroom
+// @access 	Private
+router.post(
+  "/message/:chatroomname",
+  passport.authenticate("jwt", { session: false }),
+  (req, res) => {
+    const { errors, isValid } = validateMessageInput(req.body);
+
+    // Check Validation
+    if (!isValid) {
+      // if errors, send 400 with errors object
+      return res.status(400).json(errors);
+    }
+    Chatroom.findOne({ name: req.params.chatroomname }).then(chatroom => {
+      if (!chatroom) {
+        errors.nochatroom = "No Chatroom Exists With That Name";
+        res.status(404).json(errors);
+      } else {
+        const newMessage = {
+          text: req.body.text,
+          name: req.body.name,
+          username: req.body.username,
+          avatar: req.body.avatar,
+          user: req.user.id
+        };
+
+        chatroom.messages.unshift(newMessage);
+        chatroom.save().then(chatroom => res.json(chatroom));
       }
     });
   }
