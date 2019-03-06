@@ -114,4 +114,34 @@ router.post(
   }
 );
 
+// @route 	DELETE api/chatroom/:id
+// @desc 		delete chatroom by admin
+// @access 	Private
+router.delete(
+  "/:id",
+  passport.authenticate("jwt", { session: false }),
+  (req, res) => {
+    const errors = {};
+
+    Chatroom.findById(req.params.id)
+      .then(chatroom => {
+        // Check to see if chatroom exists and user is admin
+        if (chatroom && req.user.admin) {
+          // Delete chatroom
+          chatroom.remove().then(() => res.json({ success: true }));
+        } else if (!chatroom) {
+          errors.nochatroom = "No Chatroom Exists With That ID";
+          res.status(404).json(errors);
+        } else if (!req.user.admin) {
+          errors.unauthorized =
+            "You are not authorized to delete this chatroom";
+          res.status(404).json(errors);
+        }
+      })
+      .catch(err =>
+        res.status(404).json({ chatroomnotfound: "No chatroom Found" })
+      );
+  }
+);
+
 module.exports = router;

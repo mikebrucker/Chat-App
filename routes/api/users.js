@@ -69,7 +69,7 @@ router.post("/register", (req, res) => {
   });
 });
 
-// @route 	GET api/users/login
+// @route 	POST api/users/login
 // @desc 		Login user / Returning JWT Token
 // @access 	Public Route
 router.post("/login", (req, res) => {
@@ -131,6 +131,30 @@ router.get(
       username: req.user.username,
       email: req.user.email
     });
+  }
+);
+
+// @route 	DELETE api/users/:id
+// @desc 		delete user
+// @access 	Private
+router.delete(
+  "/:id",
+  passport.authenticate("jwt", { session: false }),
+  (req, res) => {
+    const errors = {};
+
+    if (req.params.id === req.user.id) {
+      User.findOneAndDelete(req.params.id)
+        .then(user => {
+          res.json({
+            success: `${user.username} Deleted`
+          });
+        })
+        .catch(err => res.status(404).json(err));
+    } else {
+      errors.unauthorized = "Unauthorized";
+      res.status(404).json(errors);
+    }
   }
 );
 
