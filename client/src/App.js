@@ -1,12 +1,21 @@
 import React, { Component } from "react";
+import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
+import checkForAuthToken from "./store/utils/checkForAuthToken";
 import "./App.scss";
+import Login from "./components/auth/Login";
+
+checkForAuthToken();
 
 class App extends Component {
   render() {
     return (
-      <div className="App">
-        <h1>Chat App</h1>
-      </div>
+      <Router>
+        <div className="App">
+          <Switch>
+            <Route exact path="/login" component={Login} />
+          </Switch>
+        </div>
+      </Router>
     );
   }
 }

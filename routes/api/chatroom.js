@@ -16,39 +16,47 @@ router.get("/test", (req, res) => res.json({ test: "chatroom route success" }));
 
 // @route 	GET api/chatroom/id/:id
 // @desc 		Get chatroom by id
-// @access 	Public
-router.get("/id/:id", (req, res) => {
-  const errors = {};
+// @access 	Private
+router.get(
+  "/id/:id",
+  passport.authenticate("jwt", { session: false }),
+  (req, res) => {
+    const errors = {};
 
-  Chatroom.findById(req.params.id)
-    .then(chatroom => {
-      if (!chatroom) {
-        errors.nochatroom = "No Chatroom Exists With That ID";
-        res.status(404).json(errors);
-      }
+    Chatroom.findById(req.params.id)
+      .then(chatroom => {
+        if (!chatroom) {
+          errors.nochatroom = "No Chatroom Exists With That ID";
+          res.status(404).json(errors);
+        }
 
-      res.json(chatroom);
-    })
-    .catch(err => res.status(404).json(err));
-});
+        res.json(chatroom);
+      })
+      .catch(err => res.status(404).json(err));
+  }
+);
 
 // @route 	GET api/chatroom/:name
 // @desc 		Get chatroom by name
-// @access 	Public
-router.get("/:name", (req, res) => {
-  const errors = {};
+// @access 	Private
+router.get(
+  "/:name",
+  passport.authenticate("jwt", { session: false }),
+  (req, res) => {
+    const errors = {};
 
-  Chatroom.findOne({ name: req.params.name })
-    .then(chatroom => {
-      if (!chatroom) {
-        errors.nochatroom = "No Chatroom Exists With That Name";
-        res.status(404).json(errors);
-      }
+    Chatroom.findOne({ name: req.params.name })
+      .then(chatroom => {
+        if (!chatroom) {
+          errors.nochatroom = "No Chatroom Exists With That Name";
+          res.status(404).json(errors);
+        }
 
-      res.json(chatroom);
-    })
-    .catch(err => res.status(404).json(err));
-});
+        res.json(chatroom);
+      })
+      .catch(err => res.status(404).json(err));
+  }
+);
 
 // @route 	POST api/chatroom
 // @desc 		Create Chatroom
