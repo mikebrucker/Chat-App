@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
-import { loginUser } from "../../store/actions/authActions";
+import { registerUser } from "../../store/actions/authActions";
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
 import { withStyles } from "@material-ui/core/styles";
@@ -18,23 +18,25 @@ const styles = theme => ({
     padding: theme.spacing.unit
   },
   button: {
-    paddingTop: theme.spacing.unit
+    paddingTop: theme.spacing.unit * 2
   },
   errorMessage: {
-    color: "red",
-    paddingBottom: theme.spacing.unit
+    color: "red"
   }
 });
 
-class Login extends Component {
+class Register extends Component {
   state = {
+    name: "",
+    username: "",
     email: "",
     password: "",
+    password2: "",
     errors: {}
   };
 
   static propTypes = {
-    loginUser: PropTypes.func.isRequired,
+    registerUser: PropTypes.func.isRequired,
     auth: PropTypes.object.isRequired,
     errors: PropTypes.object.isRequired
   };
@@ -69,11 +71,14 @@ class Login extends Component {
     e.preventDefault();
 
     const userData = {
+      name: this.state.name,
+      username: this.state.username,
       email: this.state.email,
-      password: this.state.password
+      password: this.state.password,
+      password2: this.state.password2
     };
     console.log(userData);
-    this.props.loginUser(userData);
+    this.props.registerUser(userData, this.props.history);
   };
 
   render() {
@@ -86,6 +91,39 @@ class Login extends Component {
           <div>
             <TextField
               className={classes.textField}
+              placeholder="Name"
+              name="name"
+              type="name"
+              variant="outlined"
+              value={this.state.name}
+              onChange={this.onChange}
+              error={errors.name ? true : false}
+              autoFocus={true}
+            />
+            {errors.name ? (
+              <div className={classes.errorMessage}>{errors.name}</div>
+            ) : null}
+          </div>
+
+          <div>
+            <TextField
+              className={classes.textField}
+              placeholder="Username"
+              name="username"
+              type="username"
+              variant="outlined"
+              value={this.state.username}
+              onChange={this.onChange}
+              error={errors.username ? true : false}
+            />
+            {errors.username ? (
+              <div className={classes.errorMessage}>{errors.username}</div>
+            ) : null}
+          </div>
+
+          <div>
+            <TextField
+              className={classes.textField}
               placeholder="Email Address"
               name="email"
               type="email"
@@ -93,7 +131,6 @@ class Login extends Component {
               value={this.state.email}
               onChange={this.onChange}
               error={errors.email ? true : false}
-              autoFocus={true}
             />
             {errors.email ? (
               <div className={classes.errorMessage}>{errors.email}</div>
@@ -115,6 +152,23 @@ class Login extends Component {
               <div className={classes.errorMessage}>{errors.password}</div>
             ) : null}
           </div>
+
+          <div>
+            <TextField
+              className={classes.textField}
+              placeholder="Confirm Password"
+              name="password2"
+              type="password"
+              variant="outlined"
+              value={this.state.password2}
+              onChange={this.onChange}
+              error={errors.password2 ? true : false}
+            />
+            {errors.password2 ? (
+              <div className={classes.errorMessage}>{errors.password2}</div>
+            ) : null}
+          </div>
+
           <div className={classes.button}>
             <Button
               type="submit"
@@ -131,7 +185,7 @@ class Login extends Component {
   }
 }
 
-Login.propTypes = {
+Register.propTypes = {
   classes: PropTypes.object.isRequired,
   errors: PropTypes.object.isRequired,
   auth: PropTypes.object.isRequired
@@ -143,10 +197,10 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-  loginUser: creds => dispatch(loginUser(creds))
+  registerUser: (creds, hist) => dispatch(registerUser(creds, hist))
 });
 
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(withStyles(styles)(Login));
+)(withStyles(styles)(Register));
