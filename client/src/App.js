@@ -4,12 +4,16 @@ import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import { MuiThemeProvider } from "@material-ui/core/styles";
 import theme from "./material-ui-theme/theme";
+
 import checkForAuthToken from "./store/utils/checkForAuthToken";
 import "./App.scss";
 import Login from "./components/auth/Login";
 import Navbar from "./components/layout/Navbar";
 import Register from "./components/auth/Register";
 import Dashboard from "./components/dashboard/Dashboard";
+import Chatroom from "./components/chatroom/Chatroom";
+import Footer from "./components/layout/Footer";
+import ChatroomNotFound from "./components/chatroom/ChatroomNotFound";
 
 checkForAuthToken();
 
@@ -25,7 +29,14 @@ class App extends Component {
               <Route exact path="/login" component={Login} />
               <Route exact path="/register" component={Register} />
               <Route exact path="/dashboard" component={Dashboard} />
+              <Route exact path="/chatroom/:chatroom" component={Chatroom} />
+              <Route
+                exact
+                path="/chatroomnotfound"
+                component={ChatroomNotFound}
+              />
             </Switch>
+            <Footer />
           </div>
         </Router>
       </MuiThemeProvider>

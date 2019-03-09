@@ -33,12 +33,6 @@ class Login extends Component {
     errors: {}
   };
 
-  static propTypes = {
-    loginUser: PropTypes.func.isRequired,
-    auth: PropTypes.object.isRequired,
-    errors: PropTypes.object.isRequired
-  };
-
   // If logged in redirect to dashboard
   componentDidMount = () => {
     if (this.props.auth.isAuthenticated) {
@@ -122,7 +116,7 @@ class Login extends Component {
               color="primary"
               display={{ display: "block" }}
             >
-              Submit
+              Login
             </Button>
           </div>
         </form>
@@ -134,7 +128,8 @@ class Login extends Component {
 Login.propTypes = {
   classes: PropTypes.object.isRequired,
   errors: PropTypes.object.isRequired,
-  auth: PropTypes.object.isRequired
+  auth: PropTypes.object.isRequired,
+  loginUser: PropTypes.func.isRequired
 };
 
 const mapStateToProps = state => ({

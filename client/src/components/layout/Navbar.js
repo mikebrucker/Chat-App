@@ -50,13 +50,8 @@ const styles = theme => ({
     }
   },
   searchIcon: {
-    width: theme.spacing.unit * 9,
-    height: "100%",
-    position: "absolute",
-    pointerEvents: "none",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center"
+    width: theme.spacing.unit * 4,
+    height: "100%"
   },
   inputRoot: {
     color: "inherit",
@@ -66,7 +61,8 @@ const styles = theme => ({
     paddingTop: theme.spacing.unit,
     paddingRight: theme.spacing.unit,
     paddingBottom: theme.spacing.unit,
-    paddingLeft: theme.spacing.unit * 10,
+    paddingLeft: theme.spacing.unit,
+    textAlign: "center",
     transition: theme.transitions.create("width"),
     width: "100%",
     [theme.breakpoints.up("md")]: {
@@ -88,17 +84,31 @@ const styles = theme => ({
 });
 
 class Navbar extends Component {
-  onLogoutClick = () => {
-    this.props.logoutUser(this.props.history);
+  state = {
+    chatroom: ""
+  };
+
+  onChange = e => {
+    this.setState({
+      [e.target.name]: e.target.value
+    });
+  };
+
+  goToChatroom = () => {
+    this.props.history.push(`/chatroom/${this.state.chatroom}`);
+    this.setState({
+      chatroom: ""
+    });
   };
 
   render() {
     const { classes, auth } = this.props;
 
-    const links = auth.isAuthenticated ? <LoggedInLinks /> : <LoggedOutLinks />;
+    const links =
+      auth && auth.isAuthenticated ? <LoggedInLinks /> : <LoggedOutLinks />;
 
     return (
-      <div className={classes.root}>
+      <nav className={classes.root}>
         <AppBar color="primary" position="static">
           <Toolbar>
             <IconButton
@@ -117,17 +127,23 @@ class Navbar extends Component {
               Chat App
             </Typography>
             <div className={classes.search}>
-              <div className={classes.searchIcon}>
-                <SearchIcon />
-              </div>
               <InputBase
-                placeholder="Search…"
+                name="chatroom"
+                onChange={this.onChange}
+                value={this.state.chatroom}
+                placeholder="Enter Chatroom..."
                 classes={{
                   root: classes.inputRoot,
                   input: classes.inputInput
                 }}
               />
             </div>
+            <IconButton
+              className={classes.searchIcon}
+              onClick={this.goToChatroom}
+            >
+              <SearchIcon />
+            </IconButton>
             <div className={classes.grow} />
             <div
               classes={classnames(
@@ -139,7 +155,7 @@ class Navbar extends Component {
             </div>
           </Toolbar>
         </AppBar>
-      </div>
+      </nav>
     );
   }
 }
@@ -147,16 +163,19 @@ class Navbar extends Component {
 Navbar.propTypes = {
   classes: PropTypes.object.isRequired,
   loginUser: PropTypes.func.isRequired,
-  logoutUser: PropTypes.func.isRequired
+  logoutUser: PropTypes.func.isRequired,
+  goToChatroom: PropTypes.func
 };
 
 const mapStateToProps = state => ({
   auth: state.auth
 });
+
 const mapDispatchToProps = dispatch => ({
   loginUser: () => dispatch(loginUser()),
   logoutUser: history => dispatch(logoutUser(history))
 });
+
 export default connect(
   mapStateToProps,
   mapDispatchToProps

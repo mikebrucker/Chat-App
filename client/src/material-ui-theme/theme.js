@@ -6,6 +6,9 @@ import red from "@material-ui/core/colors/red";
 // All the following keys are optional.
 // We try our best to provide a great default value.
 const theme = createMuiTheme({
+  typography: {
+    useNextVariants: true
+  },
   palette: {
     primary: green,
     secondary: deepPurple,

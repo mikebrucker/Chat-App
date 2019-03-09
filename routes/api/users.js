@@ -100,6 +100,7 @@ router.post("/login", (req, res) => {
           id: user.id,
           name: user.name,
           username: user.username,
+          email: user.email,
           avatar: user.avatar,
           admin: user.admin
         };

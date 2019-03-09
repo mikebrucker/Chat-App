@@ -176,7 +176,7 @@ class Register extends Component {
               color="primary"
               display={{ display: "block" }}
             >
-              Submit
+              Register
             </Button>
           </div>
         </form>

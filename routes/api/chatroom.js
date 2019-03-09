@@ -58,6 +58,20 @@ router.get(
   }
 );
 
+// @route 	GET api/chatroom/
+// @desc 		Get all chatrooms
+// @access 	Private
+router.get(
+  "/",
+  passport.authenticate("jwt", { session: false }),
+  (req, res) => {
+    Chatroom.find()
+      .sort({ date: -1 })
+      .then(chatroom => res.json(chatroom))
+      .catch(err => res.status(404).json(err));
+  }
+);
+
 // @route 	POST api/chatroom
 // @desc 		Create Chatroom
 // @access 	Private
