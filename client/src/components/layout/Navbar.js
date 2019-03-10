@@ -4,6 +4,7 @@ import PropTypes from "prop-types";
 import classnames from "classnames";
 import { connect } from "react-redux";
 import { loginUser, logoutUser } from "../../store/actions/authActions";
+import { getChatroomByName } from "../../store/actions/chatroomActions";
 
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
@@ -80,12 +81,26 @@ const styles = theme => ({
     [theme.breakpoints.up("md")]: {
       display: "none"
     }
+  },
+  error: {
+    textAlign: "center",
+    backgroundColor: "red",
+    fontColor: "white"
   }
 });
 
 class Navbar extends Component {
   state = {
-    chatroom: ""
+    chatroom: "",
+    errors: {}
+  };
+
+  componentWillReceiveProps = nextProps => {
+    if (nextProps.errors) {
+      this.setState({
+        errors: nextProps.errors
+      });
+    }
   };
 
   onChange = e => {
@@ -95,7 +110,10 @@ class Navbar extends Component {
   };
 
   goToChatroom = () => {
-    this.props.history.push(`/chatroom/${this.state.chatroom}`);
+    if (this.props.auth && this.props.auth.isAuthenticated) {
+      this.props.getChatroomByName(this.state.chatroom);
+      this.props.history.push(`/chatroom/${this.state.chatroom}`);
+    }
     this.setState({
       chatroom: ""
     });
@@ -103,6 +121,7 @@ class Navbar extends Component {
 
   render() {
     const { classes, auth } = this.props;
+    const { errors } = this.state;
 
     const links =
       auth && auth.isAuthenticated ? <LoggedInLinks /> : <LoggedOutLinks />;
@@ -155,25 +174,33 @@ class Navbar extends Component {
             </div>
           </Toolbar>
         </AppBar>
+        {errors && errors.nochatroom ? (
+          <div className={classes.error}>{errors.nochatroom}</div>
+        ) : null}
+        <div />
       </nav>
     );
   }
 }
 
 Navbar.propTypes = {
+  auth: PropTypes.object.isRequired,
+  errors: PropTypes.object.isRequired,
   classes: PropTypes.object.isRequired,
   loginUser: PropTypes.func.isRequired,
   logoutUser: PropTypes.func.isRequired,
-  goToChatroom: PropTypes.func
+  getChatroomByName: PropTypes.func.isRequired
 };
 
 const mapStateToProps = state => ({
-  auth: state.auth
+  auth: state.auth,
+  errors: state.chatroom.errors ? state.chatroom.errors : {}
 });
 
 const mapDispatchToProps = dispatch => ({
   loginUser: () => dispatch(loginUser()),
-  logoutUser: history => dispatch(logoutUser(history))
+  logoutUser: history => dispatch(logoutUser(history)),
+  getChatroomByName: name => dispatch(getChatroomByName(name))
 });
 
 export default connect(

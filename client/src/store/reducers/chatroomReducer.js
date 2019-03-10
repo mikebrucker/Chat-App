@@ -21,8 +21,8 @@ export default (state = initialState, action) => {
       };
     case ADD_CHATROOM:
       return {
-        ...state,
-        chatroom: [action.payload, ...state.chatroom]
+        ...state
+        // chatroom: [action.payload, ...state.chatroom]
       };
     case GET_CHATROOMS:
       return {
@@ -35,6 +35,7 @@ export default (state = initialState, action) => {
         ...state,
         chatroom: action.payload,
         prevSearch: action.prevSearch,
+        errors: action.errors,
         loading: false
       };
     case DELETE_CHATROOM:

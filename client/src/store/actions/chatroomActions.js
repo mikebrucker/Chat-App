@@ -44,7 +44,8 @@ export const getChatroomByName = chatroomname => dispatch => {
       dispatch({
         type: GET_CHATROOM,
         payload: null,
-        prevSearch: chatroomname
+        prevSearch: chatroomname,
+        errors: err.response.data
       })
     );
 };
@@ -76,6 +77,25 @@ export const addChatroom = chatroomData => dispatch => {
     .then(res =>
       dispatch({
         type: ADD_CHATROOM,
+        payload: res.data
+      })
+    )
+    .catch(err =>
+      dispatch({
+        type: GET_ERRORS,
+        payload: err.response.data
+      })
+    );
+};
+
+// Add Message
+export const addMessage = (messageData, chatroomName) => dispatch => {
+  dispatch(clearErrors());
+  axios
+    .post(`/api/chatroom/message/${chatroomName}`, messageData)
+    .then(res =>
+      dispatch({
+        type: GET_CHATROOM,
         payload: res.data
       })
     )

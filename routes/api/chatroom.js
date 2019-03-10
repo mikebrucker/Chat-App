@@ -28,11 +28,14 @@ router.get(
         if (!chatroom) {
           errors.nochatroom = "No Chatroom Exists With That ID";
           res.status(404).json(errors);
+        } else {
+          res.json(chatroom);
         }
-
-        res.json(chatroom);
       })
-      .catch(err => res.status(404).json(err));
+      .catch(err => {
+        errors.nochatroom = "No Chatroom Exists With That ID";
+        res.status(404).json(errors);
+      });
   }
 );
 
@@ -50,11 +53,14 @@ router.get(
         if (!chatroom) {
           errors.nochatroom = "No Chatroom Exists With That Name";
           res.status(404).json(errors);
+        } else {
+          res.json(chatroom);
         }
-
-        res.json(chatroom);
       })
-      .catch(err => res.status(404).json(err));
+      .catch(err => {
+        errors.nochatroom = "No Chatroom Exists With That Name";
+        res.status(404).json(errors);
+      });
   }
 );
 
@@ -129,7 +135,7 @@ router.post(
           user: req.user.id
         };
 
-        chatroom.messages.unshift(newMessage);
+        chatroom.messages.push(newMessage);
         chatroom.save().then(chatroom => res.json(chatroom));
       }
     });

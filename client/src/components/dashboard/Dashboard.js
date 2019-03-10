@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
+import { Redirect } from "react-router-dom";
 import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
 
@@ -15,9 +16,7 @@ class Dashboard extends Component {
   render() {
     const { auth, classes } = this.props;
 
-    if (!auth.isAuthenticated) {
-      this.props.history.push("/login");
-    }
+    if (!auth.isAuthenticated) return <Redirect to="/login" />;
 
     const displayUser =
       auth && auth.user ? (
