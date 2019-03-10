@@ -73,7 +73,7 @@ export const getChatroomById = id => dispatch => {
 export const addChatroom = chatroomData => dispatch => {
   dispatch(clearErrors());
   axios
-    .chatroom("/api/chatroom", chatroomData)
+    .post("/api/chatroom", chatroomData)
     .then(res =>
       dispatch({
         type: ADD_CHATROOM,

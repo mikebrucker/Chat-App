@@ -5,11 +5,14 @@ import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
 import {
   getChatroomByName,
+  addChatroom,
   addMessage
 } from "../../store/actions/chatroomActions";
 import Messages from "./Messages";
+
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
+import { Grid } from "@material-ui/core";
 
 const styles = theme => ({
   root: {
@@ -26,11 +29,15 @@ const styles = theme => ({
     textAlign: "left",
     margin: "auto",
     maxWidth: "756px",
-    border: "2px solid green",
-    borderRadius: "12px",
     padding: theme.spacing.unit * 2,
     height: "512px",
     overflow: "auto"
+  },
+  containerContainer: {
+    display: "inline-block",
+    border: "2px solid green",
+    borderRadius: "12px",
+    padding: theme.spacing.unit * 2
   },
   errorMessage: {
     color: "red",
@@ -78,6 +85,14 @@ class Chatroom extends Component {
     console.log(this.state);
   };
 
+  clickCreateChatroom = () => {
+    const chatroomName = {
+      name: this.props.match.params.chatroom
+    };
+    console.log(this.props.match.params.chatroom);
+    this.props.addChatroom(chatroomName);
+  };
+
   render() {
     const { auth, classes, chatroom } = this.props;
     const { errors } = this.state;
@@ -87,40 +102,55 @@ class Chatroom extends Component {
       chatroom && chatroom.chatroom ? (
         <div>
           <h1>Chatroom: {chatroom.chatroom.name}</h1>
-          <div className={classes.container}>
-            <Messages messages={chatroom.chatroom.messages} auth={auth} />
+          <div className={classes.containerContainer}>
+            <div className={classes.container}>
+              <Messages messages={chatroom.chatroom.messages} auth={auth} />
+            </div>
           </div>
         </div>
       ) : chatroom && chatroom.chatroom === null ? (
-        <h1>Chatroom does not exist</h1>
+        <div>
+          <h1>Chatroom does not exist</h1>
+          <p>Would you like to create it?</p>
+          <Button
+            type="submit"
+            variant="contained"
+            color="secondary"
+            onClick={this.clickCreateChatroom}
+          >
+            Create {this.props.match.params.chatroom}
+          </Button>
+        </div>
       ) : (
         <div>Loading...</div>
       );
     const enterMessage =
       chatroom && chatroom.chatroom ? (
-        <div>
-          <TextField
-            placeholder="Enter Message..."
-            name="text"
-            type="text"
-            variant="outlined"
-            value={this.state.text}
-            onChange={this.onChange}
-            error={errors.text ? true : false}
-            autoFocus={true}
-          />
-          <Button
-            onClick={this.handleSubmit}
-            type="submit"
-            variant="contained"
-            color="secondary"
+        <form onSubmit={this.handleSubmit}>
+          <Grid
+            container
+            justify="center"
+            alignItems="center"
+            className={classes.root}
           >
-            Send
-          </Button>
-          {errors.text ? (
-            <div className={classes.errorMessage}>{errors.text}</div>
-          ) : null}
-        </div>
+            <TextField
+              placeholder="Enter Message..."
+              name="text"
+              type="text"
+              variant="outlined"
+              value={this.state.text}
+              onChange={this.onChange}
+              error={errors.text ? true : false}
+              autoFocus={true}
+            />
+            <Button type="submit" variant="contained" color="secondary">
+              Send
+            </Button>
+            {errors.text ? (
+              <div className={classes.errorMessage}>{errors.text}</div>
+            ) : null}
+          </Grid>
+        </form>
       ) : null;
 
     return (
@@ -136,6 +166,7 @@ Chatroom.propTypes = {
   auth: PropTypes.object.isRequired,
   classes: PropTypes.object.isRequired,
   getChatroomByName: PropTypes.func.isRequired,
+  addChatroom: PropTypes.func.isRequired,
   addMessage: PropTypes.func.isRequired
 };
 
@@ -147,7 +178,8 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => ({
   getChatroomByName: name => dispatch(getChatroomByName(name)),
-  addMessage: (data, chatroomname) => dispatch(addMessage(data, chatroomname))
+  addMessage: (data, chatroomname) => dispatch(addMessage(data, chatroomname)),
+  addChatroom: data => dispatch(addChatroom(data))
 });
 
 export default connect(

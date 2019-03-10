@@ -48,7 +48,8 @@ const styles = theme => ({
     [theme.breakpoints.up("sm")]: {
       marginLeft: theme.spacing.unit * 3,
       width: "auto"
-    }
+    },
+    display: "inline-block"
   },
   searchIcon: {
     width: theme.spacing.unit * 4,
@@ -109,7 +110,8 @@ class Navbar extends Component {
     });
   };
 
-  goToChatroom = () => {
+  goToChatroom = e => {
+    e.preventDefault();
     if (this.props.auth && this.props.auth.isAuthenticated) {
       this.props.getChatroomByName(this.state.chatroom);
       this.props.history.push(`/chatroom/${this.state.chatroom}`);
@@ -145,24 +147,27 @@ class Navbar extends Component {
             >
               Chat App
             </Typography>
-            <div className={classes.search}>
-              <InputBase
-                name="chatroom"
-                onChange={this.onChange}
-                value={this.state.chatroom}
-                placeholder="Enter Chatroom..."
-                classes={{
-                  root: classes.inputRoot,
-                  input: classes.inputInput
-                }}
-              />
-            </div>
-            <IconButton
-              className={classes.searchIcon}
-              onClick={this.goToChatroom}
-            >
-              <SearchIcon />
-            </IconButton>
+            <form onSubmit={this.goToChatroom}>
+              <div className={classes.search}>
+                <InputBase
+                  name="chatroom"
+                  onChange={this.onChange}
+                  value={this.state.chatroom}
+                  placeholder="Enter Chatroom..."
+                  classes={{
+                    root: classes.inputRoot,
+                    input: classes.inputInput
+                  }}
+                />
+              </div>
+              <IconButton
+                type="submit"
+                className={classes.searchIcon}
+                onClick={this.goToChatroom}
+              >
+                <SearchIcon classname={classes.searchIcon} />
+              </IconButton>
+            </form>
             <div className={classes.grow} />
             <div
               classes={classnames(

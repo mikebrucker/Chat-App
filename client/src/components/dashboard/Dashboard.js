@@ -2,13 +2,19 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import { Redirect } from "react-router-dom";
 import PropTypes from "prop-types";
+
 import { withStyles } from "@material-ui/core/styles";
+import Avatar from "@material-ui/core/Avatar";
+import Grid from "@material-ui/core/Grid";
 
 const styles = theme => ({
   root: {
     width: "100%",
     textAlign: "center",
     paddingTop: theme.spacing.unit * 6
+  },
+  avatar: {
+    display: "inline-block"
   }
 });
 
@@ -21,15 +27,15 @@ class Dashboard extends Component {
     const displayUser =
       auth && auth.user ? (
         <div>
-          <img
-            className="rounded img-fluid"
-            src={auth.user.avatar}
-            alt={auth.user.username}
-            style={{ width: "250px" }}
-            title="You must have a Gravatar connected to your email to display an image"
-          />
-
-          <h1>Welcome {auth.user.name}</h1>
+          <h1>
+            Welcome {auth.user.name}{" "}
+            <Avatar
+              className={classes.avatar}
+              src={auth.user.avatar}
+              alt={auth.user.username}
+              title="You must have a Gravatar connected to your email to display an image"
+            />
+          </h1>
           <h3>username: {auth.user.username}</h3>
           <h3>email: {auth.user.email}</h3>
         </div>
@@ -37,7 +43,16 @@ class Dashboard extends Component {
         <div>Loading...</div>
       );
 
-    return <div className={classes.root}>{displayUser}</div>;
+    return (
+      <Grid
+        container
+        justify="center"
+        alignItems="center"
+        className={classes.root}
+      >
+        {displayUser}
+      </Grid>
+    );
   }
 }
 

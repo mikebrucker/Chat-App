@@ -21,8 +21,8 @@ export default (state = initialState, action) => {
       };
     case ADD_CHATROOM:
       return {
-        ...state
-        // chatroom: [action.payload, ...state.chatroom]
+        ...state,
+        chatroom: action.payload
       };
     case GET_CHATROOMS:
       return {
