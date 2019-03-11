@@ -25,6 +25,13 @@ const UserSchema = new Schema({
     type: String,
     required: true
   },
+  favorites: [
+    {
+      name: {
+        type: String
+      }
+    }
+  ],
   admin: {
     type: Boolean,
     default: false,

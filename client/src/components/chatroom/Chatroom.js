@@ -12,7 +12,7 @@ import Messages from "./Messages";
 
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
-import { Grid } from "@material-ui/core";
+import Grid from "@material-ui/core/Grid";
 
 const styles = theme => ({
   root: {
@@ -39,9 +39,15 @@ const styles = theme => ({
     borderRadius: "12px",
     padding: theme.spacing.unit * 2
   },
+  form: {
+    textAlign: "center"
+  },
   errorMessage: {
     color: "red",
     paddingBottom: theme.spacing.unit
+  },
+  input: {
+    margin: theme.spacing.unit
   }
 });
 
@@ -82,14 +88,12 @@ class Chatroom extends Component {
     this.setState({
       text: ""
     });
-    console.log(this.state);
   };
 
   clickCreateChatroom = () => {
     const chatroomName = {
       name: this.props.match.params.chatroom
     };
-    console.log(this.props.match.params.chatroom);
     this.props.addChatroom(chatroomName);
   };
 
@@ -126,7 +130,7 @@ class Chatroom extends Component {
       );
     const enterMessage =
       chatroom && chatroom.chatroom ? (
-        <form onSubmit={this.handleSubmit}>
+        <form className={classes.form} onSubmit={this.handleSubmit}>
           <Grid
             container
             justify="center"
@@ -134,6 +138,7 @@ class Chatroom extends Component {
             className={classes.root}
           >
             <TextField
+              className={classes.input}
               placeholder="Enter Message..."
               name="text"
               type="text"
@@ -146,10 +151,10 @@ class Chatroom extends Component {
             <Button type="submit" variant="contained" color="secondary">
               Send
             </Button>
-            {errors.text ? (
-              <div className={classes.errorMessage}>{errors.text}</div>
-            ) : null}
           </Grid>
+          {errors.text ? (
+            <div className={classes.errorMessage}>{errors.text}</div>
+          ) : null}
         </form>
       ) : null;
 

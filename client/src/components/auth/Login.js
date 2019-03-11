@@ -75,6 +75,7 @@ class Login extends Component {
 
     return (
       <div className={classes.root}>
+        <h2>Login</h2>
         <form onSubmit={this.onSubmit}>
           <div>
             <TextField

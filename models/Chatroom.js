@@ -14,6 +14,9 @@ const ChatroomSchema = new Schema({
         max: 2000,
         required: true
       },
+      userId: {
+        type: String
+      },
       name: {
         type: String
       },

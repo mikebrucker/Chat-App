@@ -22,7 +22,8 @@ export default (state = initialState, action) => {
     case ADD_CHATROOM:
       return {
         ...state,
-        chatroom: action.payload
+        chatroom: action.payload,
+        errors: action.errors
       };
     case GET_CHATROOMS:
       return {

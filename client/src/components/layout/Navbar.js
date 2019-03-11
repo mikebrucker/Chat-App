@@ -1,11 +1,12 @@
 import React, { Component } from "react";
-import { withRouter } from "react-router-dom";
+import { Link as RouterLink, withRouter } from "react-router-dom";
 import PropTypes from "prop-types";
 import classnames from "classnames";
 import { connect } from "react-redux";
 import { loginUser, logoutUser } from "../../store/actions/authActions";
 import { getChatroomByName } from "../../store/actions/chatroomActions";
 
+import Link from "@material-ui/core/Link";
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
 import IconButton from "@material-ui/core/IconButton";
@@ -87,6 +88,9 @@ const styles = theme => ({
     textAlign: "center",
     backgroundColor: "red",
     fontColor: "white"
+  },
+  fontColor: {
+    color: "white"
   }
 });
 
@@ -145,7 +149,14 @@ class Navbar extends Component {
               color="inherit"
               noWrap
             >
-              Chat App
+              <Link
+                className={classes.fontColor}
+                component={RouterLink}
+                underline="none"
+                to="/dashboard"
+              >
+                Chat App
+              </Link>
             </Typography>
             <form onSubmit={this.goToChatroom}>
               <div className={classes.search}>
@@ -165,7 +176,7 @@ class Navbar extends Component {
                 className={classes.searchIcon}
                 onClick={this.goToChatroom}
               >
-                <SearchIcon classname={classes.searchIcon} />
+                <SearchIcon />
               </IconButton>
             </form>
             <div className={classes.grow} />

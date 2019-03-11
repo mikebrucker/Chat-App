@@ -77,7 +77,6 @@ class Register extends Component {
       password: this.state.password,
       password2: this.state.password2
     };
-    console.log(userData);
     this.props.registerUser(userData, this.props.history);
   };
 
@@ -87,6 +86,7 @@ class Register extends Component {
 
     return (
       <div className={classes.root}>
+        <h2>Register</h2>
         <form onSubmit={this.onSubmit}>
           <div>
             <TextField

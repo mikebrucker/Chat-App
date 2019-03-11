@@ -102,6 +102,8 @@ router.post("/login", (req, res) => {
           username: user.username,
           email: user.email,
           avatar: user.avatar,
+          date: user.date,
+          favorites: user.favorites,
           admin: user.admin
         };
 
@@ -136,7 +138,8 @@ router.get(
       id: req.user.id,
       name: req.user.name,
       username: req.user.username,
-      email: req.user.email
+      email: req.user.email,
+      favorites: req.user.favorites
     });
   }
 );

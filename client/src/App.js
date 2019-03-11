@@ -13,6 +13,7 @@ import Login from "./components/auth/Login";
 import Register from "./components/auth/Register";
 import Dashboard from "./components/dashboard/Dashboard";
 import Chatroom from "./components/chatroom/Chatroom";
+import Paper from "@material-ui/core/Paper";
 
 checkForAuthToken();
 
@@ -21,17 +22,18 @@ class App extends Component {
     return (
       <MuiThemeProvider theme={theme}>
         <Router>
-          <div className="App">
+          <Paper className="App">
             <Navbar />
             <CssBaseline />
             <Switch>
               <Route exact path="/login" component={Login} />
               <Route exact path="/register" component={Register} />
+              <Route exact path="/" component={Dashboard} />
               <Route exact path="/dashboard" component={Dashboard} />
               <Route exact path="/chatroom/:chatroom" component={Chatroom} />
             </Switch>
             <Footer />
-          </div>
+          </Paper>
         </Router>
       </MuiThemeProvider>
     );
