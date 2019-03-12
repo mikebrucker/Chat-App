@@ -1,7 +1,12 @@
 import axios from "axios";
 import setAuthToken from "../utils/setAuthToken";
 import jwt_decode from "jwt-decode";
-import { GET_ERRORS, SET_CURRENT_USER } from "./types";
+import {
+  GET_ERRORS,
+  SET_CURRENT_USER,
+  SET_CURRENT_USER_FAVS,
+  SET_CURRENT_USER_UNFAVS
+} from "./types";
 
 // Register User
 export const registerUser = (userData, history) => dispatch => {
@@ -58,4 +63,40 @@ export const logoutUser = history => dispatch => {
   // Set current user to {} which will set also isAuthenticated to false
   dispatch(setCurrentUser({}));
   history.push("/login");
+};
+
+// Favorite a chatroom
+export const favoriteThisChatroom = favChatroom => dispatch => {
+  axios
+    .post("/api/users/favorite", favChatroom)
+    .then(res => {
+      dispatch({
+        type: SET_CURRENT_USER_FAVS,
+        payload: favChatroom
+      });
+    })
+    .catch(err =>
+      dispatch({
+        type: GET_ERRORS,
+        payload: err.response.data
+      })
+    );
+};
+
+// Unfavorite a chatroom
+export const unFavoriteThisChatroom = favChatroom => dispatch => {
+  axios
+    .post("/api/users/unfavorite", favChatroom)
+    .then(res => {
+      dispatch({
+        type: SET_CURRENT_USER_UNFAVS,
+        payload: favChatroom
+      });
+    })
+    .catch(err =>
+      dispatch({
+        type: GET_ERRORS,
+        payload: err.response.data
+      })
+    );
 };

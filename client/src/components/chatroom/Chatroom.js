@@ -8,11 +8,17 @@ import {
   addChatroom,
   addMessage
 } from "../../store/actions/chatroomActions";
+import {
+  favoriteThisChatroom,
+  unFavoriteThisChatroom
+} from "../../store/actions/authActions";
 import Messages from "./Messages";
 
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
 import Grid from "@material-ui/core/Grid";
+import FavoriteBorder from "@material-ui/icons/FavoriteBorder";
+import Favorite from "@material-ui/icons/Favorite";
 
 const styles = theme => ({
   root: {
@@ -97,15 +103,49 @@ class Chatroom extends Component {
     this.props.addChatroom(chatroomName);
   };
 
+  favOrUnFavThisChatroom = () => {
+    const myFavorite = {
+      name: this.props.match.params.chatroom
+    };
+    if (
+      this.props.auth &&
+      this.props.auth.user.favorites.filter(fav => {
+        return fav.name === this.props.chatroom.chatroom.name;
+      }).length > 0
+    ) {
+      console.log("unfav");
+      this.props.unFavoriteThisChatroom(myFavorite);
+    } else {
+      console.log("fav");
+      this.props.favoriteThisChatroom(myFavorite);
+    }
+  };
+
   render() {
     const { auth, classes, chatroom } = this.props;
     const { errors } = this.state;
     if (!auth.isAuthenticated) return <Redirect to="/login" />;
 
+    const isFavorite =
+      auth &&
+      chatroom &&
+      auth.user.favorites.filter(fav => {
+        return fav.name === chatroom.chatroom.name;
+      }).length > 0 ? (
+        <Favorite />
+      ) : (
+        <FavoriteBorder />
+      );
+
     const showChatroom =
       chatroom && chatroom.chatroom ? (
         <div>
-          <h1>Chatroom: {chatroom.chatroom.name}</h1>
+          <h1>
+            <Button onClick={this.favOrUnFavThisChatroom} color="secondary">
+              {isFavorite}
+            </Button>
+            Chatroom: {chatroom.chatroom.name}
+          </h1>
           <div className={classes.containerContainer}>
             <div className={classes.container}>
               <Messages messages={chatroom.chatroom.messages} auth={auth} />
@@ -172,7 +212,8 @@ Chatroom.propTypes = {
   classes: PropTypes.object.isRequired,
   getChatroomByName: PropTypes.func.isRequired,
   addChatroom: PropTypes.func.isRequired,
-  addMessage: PropTypes.func.isRequired
+  addMessage: PropTypes.func.isRequired,
+  favoriteThisChatroom: PropTypes.func.isRequired
 };
 
 const mapStateToProps = state => ({
@@ -184,7 +225,11 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = dispatch => ({
   getChatroomByName: name => dispatch(getChatroomByName(name)),
   addMessage: (data, chatroomname) => dispatch(addMessage(data, chatroomname)),
-  addChatroom: data => dispatch(addChatroom(data))
+  addChatroom: data => dispatch(addChatroom(data)),
+  favoriteThisChatroom: chatroomname =>
+    dispatch(favoriteThisChatroom(chatroomname)),
+  unFavoriteThisChatroom: chatroomname =>
+    dispatch(unFavoriteThisChatroom(chatroomname))
 });
 
 export default connect(

@@ -127,6 +127,62 @@ router.post("/login", (req, res) => {
   });
 });
 
+// @route 	POST api/users/favorite
+// @desc 		Favorite a chatroom
+// @access 	Private Route
+router.post(
+  "/favorite",
+  passport.authenticate("jwt", { session: false }),
+  (req, res) => {
+    const errors = {};
+    User.findById(req.user.id)
+      .then(user => {
+        if (
+          user &&
+          user.favorites.filter(fav => fav.name === req.body.name).length > 0
+        ) {
+          errors.alreadyFavorited = "This room is already a favorite";
+          return res.status(400).json(errors);
+        }
+        user.favorites.push({ name: req.body.name });
+        user.save().then(user => res.json(user));
+      })
+      .catch(err =>
+        res.status(404).json({ errorFavorite: "Error with favorites" })
+      );
+  }
+);
+
+// @route 	POST api/users/unfavorite
+// @desc 		Favorite a chatroom
+// @access 	Private Route
+router.post(
+  "/unfavorite",
+  passport.authenticate("jwt", { session: false }),
+  (req, res) => {
+    const errors = {};
+
+    User.findById(req.user.id)
+      .then(user => {
+        if (
+          user.favorites.filter(fav => fav.name === req.body.name).length > 0
+        ) {
+          const removeIndex = user.favorites
+            .map(fav => fav.name)
+            .indexOf(req.body.name);
+          user.favorites.splice(removeIndex, 1);
+          user.save().then(user => res.json(user));
+        } else {
+          errors.alreadyFavorited = "This room is not a favorite";
+          return res.status(400).json(errors);
+        }
+      })
+      .catch(err =>
+        res.status(404).json({ errorFavorite: "Error with unfavorites" })
+      );
+  }
+);
+
 // @route 	GET api/users/current
 // @desc 		Return current user
 // @access 	Private Route

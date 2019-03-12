@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import { Redirect } from "react-router-dom";
+import { Link as RouterLink, Redirect } from "react-router-dom";
 import PropTypes from "prop-types";
 import { addChatroom } from "../../store/actions/chatroomActions";
 import Moment from "react-moment";
@@ -9,6 +9,7 @@ import Avatar from "@material-ui/core/Avatar";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
 import Grid from "@material-ui/core/Grid";
+import Link from "@material-ui/core/Link";
 
 const styles = theme => ({
   root: {
@@ -55,7 +56,6 @@ class Dashboard extends Component {
 
   render() {
     const { auth, classes, errors } = this.props;
-    console.log(auth);
     if (!auth.isAuthenticated) return <Redirect to="/login" />;
 
     const displayUser =
@@ -78,7 +78,16 @@ class Dashboard extends Component {
           </h3>
           {auth.user.favorites.length > 0 ? (
             auth.user.favorites.map(fav => {
-              return <h4>{fav.name}</h4>;
+              return (
+                <Link
+                  color="secondary"
+                  component={RouterLink}
+                  underline="none"
+                  to={`/chatroom/${fav.name}`}
+                >
+                  <h4 key={fav._id}>{fav.name}</h4>
+                </Link>
+              );
             })
           ) : (
             <h4>No Favorites Added Yet</h4>

@@ -1,4 +1,8 @@
-import { SET_CURRENT_USER } from "../actions/types";
+import {
+  SET_CURRENT_USER,
+  SET_CURRENT_USER_FAVS,
+  SET_CURRENT_USER_UNFAVS
+} from "../actions/types";
 import isEmpty from "../validation/is-empty";
 
 const initialState = {
@@ -13,6 +17,24 @@ export default (state = initialState, action) => {
         ...state,
         isAuthenticated: !isEmpty(action.payload),
         user: action.payload
+      };
+    case SET_CURRENT_USER_FAVS:
+      return {
+        ...state,
+        user: {
+          ...state.user,
+          favorites: [...state.user.favorites, action.payload]
+        }
+      };
+    case SET_CURRENT_USER_UNFAVS:
+      return {
+        ...state,
+        user: {
+          ...state.user,
+          favorites: state.user.favorites.filter(
+            fav => fav.name !== action.payload.name
+          )
+        }
       };
     default:
       return state;
