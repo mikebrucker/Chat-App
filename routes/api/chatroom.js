@@ -73,7 +73,7 @@ router.get(
   (req, res) => {
     Chatroom.find()
       .sort({ date: -1 })
-      .then(chatroom => res.json(chatroom))
+      .then(chatrooms => res.json(chatrooms))
       .catch(err => res.status(404).json(err));
   }
 );

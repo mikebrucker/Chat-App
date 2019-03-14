@@ -1,23 +1,32 @@
 import React, { Component } from "react";
 import { Link as RouterLink, withRouter } from "react-router-dom";
 import PropTypes from "prop-types";
-import classnames from "classnames";
 import { connect } from "react-redux";
 import { loginUser, logoutUser } from "../../store/actions/authActions";
-import { getChatroomByName } from "../../store/actions/chatroomActions";
+import {
+  getChatroomByName,
+  getChatrooms
+} from "../../store/actions/chatroomActions";
+import LoggedInLinks from "./LoggedInLinks";
+import LoggedOutLinks from "./LoggedOutLInks";
 
+import { fade } from "@material-ui/core/styles/colorManipulator";
+import { withStyles } from "@material-ui/core/styles";
 import Link from "@material-ui/core/Link";
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
 import IconButton from "@material-ui/core/IconButton";
 import Typography from "@material-ui/core/Typography";
 import InputBase from "@material-ui/core/InputBase";
-import { fade } from "@material-ui/core/styles/colorManipulator";
-import { withStyles } from "@material-ui/core/styles";
+import Menu from "@material-ui/core/Menu";
+import Drawer from "@material-ui/core/Drawer";
+import List from "@material-ui/core/List";
+import ListItem from "@material-ui/core/ListItem";
+import ListItemText from "@material-ui/core/ListItemText";
+import ListSubheader from "@material-ui/core/ListSubheader";
+import MoreIcon from "@material-ui/icons/MoreVert";
 import MenuIcon from "@material-ui/icons/Menu";
 import SearchIcon from "@material-ui/icons/Search";
-import LoggedInLinks from "./LoggedInLinks";
-import LoggedOutLinks from "./LoggedOutLInks";
 
 const styles = theme => ({
   root: {
@@ -45,7 +54,6 @@ const styles = theme => ({
     },
     marginRight: theme.spacing.unit * 2,
     marginLeft: 0,
-    width: "100%",
     [theme.breakpoints.up("sm")]: {
       marginLeft: theme.spacing.unit * 3,
       width: "auto"
@@ -69,8 +77,11 @@ const styles = theme => ({
     transition: theme.transitions.create("width"),
     width: "100%",
     [theme.breakpoints.up("md")]: {
-      width: 200
+      width: 300
     }
+  },
+  form: {
+    width: "auto"
   },
   sectionDesktop: {
     display: "none",
@@ -91,22 +102,22 @@ const styles = theme => ({
   },
   fontColor: {
     color: "white"
+  },
+  list: {
+    width: 250
   }
 });
 
 class Navbar extends Component {
   state = {
     chatroom: "",
-    errors: {}
+    anchorEl: null,
+    left: false
   };
 
-  componentWillReceiveProps = nextProps => {
-    if (nextProps.errors) {
-      this.setState({
-        errors: nextProps.errors
-      });
-    }
-  };
+  componentDidMount() {
+    this.props.getChatrooms();
+  }
 
   onChange = e => {
     this.setState({
@@ -125,18 +136,87 @@ class Navbar extends Component {
     });
   };
 
+  goToChatroomFromSideMenu = room => {
+    if (this.props.auth && this.props.auth.isAuthenticated) {
+      this.props.getChatroomByName(room);
+      this.props.history.push(`/chatroom/${room}`);
+    }
+    this.setState({
+      chatroom: ""
+    });
+  };
+
+  toggleDrawer = () => {
+    this.setState({
+      left: !this.state.left
+    });
+  };
+
+  handleMoreOpen = event => {
+    this.setState({ anchorEl: event.currentTarget });
+  };
+
+  handleMoreClose = () => {
+    this.setState({ anchorEl: null });
+  };
+
   render() {
-    const { classes, auth } = this.props;
-    const { errors } = this.state;
+    const { classes, auth, chatroom } = this.props;
+    const { anchorEl } = this.state;
+    const isMenuOpen = Boolean(anchorEl);
 
     const links =
-      auth && auth.isAuthenticated ? <LoggedInLinks /> : <LoggedOutLinks />;
+      auth && auth.isAuthenticated ? (
+        <LoggedInLinks />
+      ) : (
+        <LoggedOutLinks
+          handleMoreClose={this.handleMoreClose}
+          isMenuOpen={isMenuOpen}
+        />
+      );
+
+    const mobileLinks = (
+      <Menu
+        anchorEl={anchorEl}
+        anchorOrigin={{ vertical: "top", horizontal: "right" }}
+        transformOrigin={{ vertical: "top", horizontal: "right" }}
+        open={isMenuOpen}
+        onClose={this.handleMoreClose}
+      >
+        {links}
+      </Menu>
+    );
+
+    const sideMenu = (
+      <div className={classes.list}>
+        <ListSubheader>All Chatrooms</ListSubheader>
+        <List>
+          {auth &&
+          auth.isAuthenticated &&
+          chatroom &&
+          chatroom.chatrooms.length > 0 ? (
+            chatroom.chatrooms.map(room => (
+              <ListItem
+                button
+                key={room._id}
+                onClick={this.goToChatroomFromSideMenu.bind(this, room.name)}
+              >
+                <ListItemText primary={room.name} />
+              </ListItem>
+            ))
+          ) : (
+            <div>Log In To See!</div>
+          )}
+        </List>
+      </div>
+    );
 
     return (
       <nav className={classes.root}>
         <AppBar color="primary" position="static">
           <Toolbar>
             <IconButton
+              onClick={this.toggleDrawer}
               className={classes.menuButton}
               color="inherit"
               aria-label="Open drawer"
@@ -158,7 +238,7 @@ class Navbar extends Component {
                 Chat App
               </Link>
             </Typography>
-            <form onSubmit={this.goToChatroom}>
+            <form className={classes.form} onSubmit={this.goToChatroom}>
               <div className={classes.search}>
                 <InputBase
                   name="chatroom"
@@ -180,20 +260,29 @@ class Navbar extends Component {
               </IconButton>
             </form>
             <div className={classes.grow} />
-            <div
-              classes={classnames(
-                classes.sectionDesktop,
-                classes.sectionMobile
-              )}
-            >
-              {links}
+            <div className={classes.sectionDesktop}>{links}</div>
+            <div className={classes.sectionMobile}>
+              <IconButton
+                aria-haspopup="true"
+                onClick={this.handleMoreOpen}
+                color="inherit"
+              >
+                <MoreIcon />
+              </IconButton>
             </div>
           </Toolbar>
         </AppBar>
-        {errors && errors.nochatroom ? (
-          <div className={classes.error}>{errors.nochatroom}</div>
-        ) : null}
-        <div />
+        {mobileLinks}
+        <Drawer open={this.state.left} onClose={this.toggleDrawer}>
+          <div
+            tabIndex={0}
+            role="button"
+            onClick={this.toggleDrawer}
+            onKeyDown={this.toggleDrawer}
+          >
+            {sideMenu}
+          </div>
+        </Drawer>
       </nav>
     );
   }
@@ -201,22 +290,23 @@ class Navbar extends Component {
 
 Navbar.propTypes = {
   auth: PropTypes.object.isRequired,
-  errors: PropTypes.object.isRequired,
   classes: PropTypes.object.isRequired,
   loginUser: PropTypes.func.isRequired,
   logoutUser: PropTypes.func.isRequired,
-  getChatroomByName: PropTypes.func.isRequired
+  getChatroomByName: PropTypes.func.isRequired,
+  getChatrooms: PropTypes.func.isRequired
 };
 
 const mapStateToProps = state => ({
   auth: state.auth,
-  errors: state.chatroom.errors ? state.chatroom.errors : {}
+  chatroom: state.chatroom
 });
 
 const mapDispatchToProps = dispatch => ({
   loginUser: () => dispatch(loginUser()),
   logoutUser: history => dispatch(logoutUser(history)),
-  getChatroomByName: name => dispatch(getChatroomByName(name))
+  getChatroomByName: name => dispatch(getChatroomByName(name)),
+  getChatrooms: () => dispatch(getChatrooms())
 });
 
 export default connect(
