@@ -19,14 +19,16 @@ export default (state = initialState, action) => {
         user: action.payload
       };
     case SET_CURRENT_USER_FAVS:
+      console.log(action.payload);
       return {
         ...state,
         user: {
           ...state.user,
-          favorites: [...state.user.favorites, action.payload]
+          favorites: action.payload
         }
       };
     case SET_CURRENT_USER_UNFAVS:
+      console.log(action.payload);
       return {
         ...state,
         user: {

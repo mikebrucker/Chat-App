@@ -6,7 +6,8 @@ import { withStyles } from "@material-ui/core/styles";
 import {
   getChatroomByName,
   addChatroom,
-  addMessage
+  addMessage,
+  getChatrooms
 } from "../../store/actions/chatroomActions";
 import {
   favoriteThisChatroom,
@@ -65,6 +66,7 @@ class Chatroom extends Component {
 
   componentDidMount() {
     this.props.getChatroomByName(this.props.match.params.chatroom);
+    this.props.getChatrooms();
   }
 
   componentWillReceiveProps = nextProps => {
@@ -101,6 +103,7 @@ class Chatroom extends Component {
       name: this.props.match.params.chatroom
     };
     this.props.addChatroom(chatroomName);
+    this.props.getChatrooms();
   };
 
   favOrUnFavThisChatroom = () => {
@@ -109,14 +112,13 @@ class Chatroom extends Component {
     };
     if (
       this.props.auth &&
+      this.props.chatroom &&
       this.props.auth.user.favorites.filter(fav => {
         return fav.name === this.props.chatroom.chatroom.name;
       }).length > 0
     ) {
-      console.log("unfav");
       this.props.unFavoriteThisChatroom(myFavorite);
     } else {
-      console.log("fav");
       this.props.favoriteThisChatroom(myFavorite);
     }
   };
@@ -129,6 +131,7 @@ class Chatroom extends Component {
     const isFavorite =
       auth &&
       chatroom &&
+      chatroom.chatroom &&
       auth.user.favorites.filter(fav => {
         return fav.name === chatroom.chatroom.name;
       }).length > 0 ? (
@@ -213,7 +216,8 @@ Chatroom.propTypes = {
   getChatroomByName: PropTypes.func.isRequired,
   addChatroom: PropTypes.func.isRequired,
   addMessage: PropTypes.func.isRequired,
-  favoriteThisChatroom: PropTypes.func.isRequired
+  favoriteThisChatroom: PropTypes.func.isRequired,
+  getChatrooms: PropTypes.func.isRequired
 };
 
 const mapStateToProps = state => ({
@@ -229,7 +233,8 @@ const mapDispatchToProps = dispatch => ({
   favoriteThisChatroom: chatroomname =>
     dispatch(favoriteThisChatroom(chatroomname)),
   unFavoriteThisChatroom: chatroomname =>
-    dispatch(unFavoriteThisChatroom(chatroomname))
+    dispatch(unFavoriteThisChatroom(chatroomname)),
+  getChatrooms: () => dispatch(getChatrooms())
 });
 
 export default connect(

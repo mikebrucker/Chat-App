@@ -147,6 +147,7 @@ class Navbar extends Component {
   };
 
   toggleDrawer = () => {
+    this.props.getChatrooms();
     this.setState({
       left: !this.state.left
     });

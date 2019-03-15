@@ -65,6 +65,8 @@ export const logoutUser = history => dispatch => {
   history.push("/login");
 };
 
+// FAVS DON'T WORK RIGHT PAYLOAD IS WRONG
+
 // Favorite a chatroom
 export const favoriteThisChatroom = favChatroom => dispatch => {
   axios
@@ -72,7 +74,7 @@ export const favoriteThisChatroom = favChatroom => dispatch => {
     .then(res => {
       dispatch({
         type: SET_CURRENT_USER_FAVS,
-        payload: favChatroom
+        payload: res.data.favorites
       });
     })
     .catch(err =>

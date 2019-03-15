@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import { Link as RouterLink, Redirect } from "react-router-dom";
 import PropTypes from "prop-types";
-import { addChatroom } from "../../store/actions/chatroomActions";
+import { addChatroom, getChatrooms } from "../../store/actions/chatroomActions";
 import Moment from "react-moment";
 import { withStyles } from "@material-ui/core/styles";
 import Avatar from "@material-ui/core/Avatar";
@@ -36,6 +36,10 @@ class Dashboard extends Component {
     chatroomname: ""
   };
 
+  componentDidMount() {
+    this.props.getChatrooms();
+  }
+
   onChange = e => {
     this.setState({
       [e.target.name]: e.target.value
@@ -47,11 +51,18 @@ class Dashboard extends Component {
     const chatroomName = {
       name: this.state.chatroomname
     };
-    this.props.addChatroom(chatroomName);
     this.setState({
       chatroomname: ""
     });
-    this.props.history.push(`/chatroom/${chatroomName.name}`);
+    if (
+      this.props.chatroom.chatrooms.filter(room => {
+        return room.name === chatroomName.name;
+      }).length === 0
+    ) {
+      this.props.addChatroom(chatroomName);
+      this.props.history.push(`/chatroom/${chatroomName.name}`);
+      this.props.getChatrooms();
+    }
   };
 
   render() {
@@ -80,12 +91,13 @@ class Dashboard extends Component {
             auth.user.favorites.map(fav => {
               return (
                 <Link
+                  key={fav._id}
                   color="secondary"
                   component={RouterLink}
                   underline="none"
                   to={`/chatroom/${fav.name}`}
                 >
-                  <h4 key={fav._id}>{fav.name}</h4>
+                  <h4>{fav.name}</h4>
                 </Link>
               );
             })
@@ -145,16 +157,20 @@ class Dashboard extends Component {
 Dashboard.propTypes = {
   auth: PropTypes.object.isRequired,
   classes: PropTypes.object.isRequired,
-  addChatroom: PropTypes.func.isRequired
+  chatroom: PropTypes.object.isRequired,
+  addChatroom: PropTypes.func.isRequired,
+  getChatrooms: PropTypes.func.isRequired
 };
 
 const mapStateToProps = state => ({
   auth: state.auth,
-  errors: state.errors
+  errors: state.errors,
+  chatroom: state.chatroom
 });
 
 const mapDispatchToProps = dispatch => ({
-  addChatroom: data => dispatch(addChatroom(data))
+  addChatroom: data => dispatch(addChatroom(data)),
+  getChatrooms: () => dispatch(getChatrooms())
 });
 
 export default connect(
