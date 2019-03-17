@@ -13,7 +13,7 @@ import {
   favoriteThisChatroom,
   unFavoriteThisChatroom
 } from "../../store/actions/authActions";
-import Messages from "./Messages";
+import Chatbox from "./Chatbox";
 
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
@@ -29,31 +29,23 @@ const styles = theme => ({
   },
   textField: {
     width: "100%",
-    maxWidth: "900px",
     padding: theme.spacing.unit
   },
-  container: {
-    textAlign: "left",
-    margin: "auto",
-    maxWidth: "756px",
-    padding: theme.spacing.unit * 2,
-    height: "512px",
-    overflow: "auto"
-  },
   containerContainer: {
+    width: "90vw",
+    backgroundColor: "white",
+    textAlign: "left",
     display: "inline-block",
-    border: "2px solid green",
-    borderRadius: "12px",
-    padding: theme.spacing.unit * 2
-  },
-  form: {
-    textAlign: "center"
+    border: "4px solid #4caf50",
+    borderRadius: "6px",
+    textAlign: "left"
   },
   errorMessage: {
     color: "red",
     paddingBottom: theme.spacing.unit
   },
   input: {
+    width: "55vw",
     margin: theme.spacing.unit
   }
 });
@@ -140,19 +132,45 @@ class Chatroom extends Component {
         <FavoriteBorder />
       );
 
+    const enterMessage =
+      chatroom && chatroom.chatroom ? (
+        <form onSubmit={this.handleSubmit}>
+          <Grid container justify="center" alignItems="center">
+            <TextField
+              className={classes.input}
+              placeholder="Enter Message..."
+              name="text"
+              type="text"
+              variant="outlined"
+              multiline={true}
+              rowsMax={20}
+              value={this.state.text}
+              onChange={this.onChange}
+              error={errors.text ? true : false}
+              autoFocus={true}
+            />
+            <Button type="submit" variant="contained" color="secondary">
+              Send
+            </Button>
+          </Grid>
+          {errors.text ? (
+            <div className={classes.errorMessage}>{errors.text}</div>
+          ) : null}
+        </form>
+      ) : null;
+
     const showChatroom =
       chatroom && chatroom.chatroom ? (
         <div>
-          <h1>
-            <Button onClick={this.favOrUnFavThisChatroom} color="secondary">
-              {isFavorite}
-            </Button>
-            Chatroom: {chatroom.chatroom.name}
-          </h1>
           <div className={classes.containerContainer}>
-            <div className={classes.container}>
-              <Messages messages={chatroom.chatroom.messages} auth={auth} />
-            </div>
+            <h1>
+              <Button onClick={this.favOrUnFavThisChatroom} color="secondary">
+                {isFavorite}
+              </Button>
+              {chatroom.chatroom.name}
+            </h1>
+            <Chatbox messages={chatroom.chatroom.messages} auth={auth} />
+            {enterMessage}
           </div>
         </div>
       ) : chatroom && chatroom.chatroom === null ? (
@@ -171,42 +189,8 @@ class Chatroom extends Component {
       ) : (
         <div>Loading...</div>
       );
-    const enterMessage =
-      chatroom && chatroom.chatroom ? (
-        <form className={classes.form} onSubmit={this.handleSubmit}>
-          <Grid
-            container
-            justify="center"
-            alignItems="center"
-            className={classes.root}
-          >
-            <TextField
-              className={classes.input}
-              placeholder="Enter Message..."
-              name="text"
-              type="text"
-              variant="outlined"
-              value={this.state.text}
-              onChange={this.onChange}
-              error={errors.text ? true : false}
-              autoFocus={true}
-            />
-            <Button type="submit" variant="contained" color="secondary">
-              Send
-            </Button>
-          </Grid>
-          {errors.text ? (
-            <div className={classes.errorMessage}>{errors.text}</div>
-          ) : null}
-        </form>
-      ) : null;
 
-    return (
-      <div className={classes.root}>
-        {showChatroom}
-        {enterMessage}
-      </div>
-    );
+    return <div className={classes.root}>{showChatroom}</div>;
   }
 }
 

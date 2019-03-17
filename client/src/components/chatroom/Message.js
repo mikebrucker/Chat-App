@@ -5,25 +5,24 @@ import Grid from "@material-ui/core/Grid";
 
 const styles = theme => ({
   root: {
-    border: "solid black",
-    borderWidth: "1px 2px 1px 2px",
-    width: "100%"
+    borderBottom: "1px solid #4caf50",
+    width: "100%",
+    wordBreak: "break-all"
   },
   owner: {
-    backgroundColor: "green",
-    color: "white",
+    backgroundColor: "#00e676",
+    color: "#311b92",
     padding: theme.spacing.unit,
     borderRadius: theme.spacing.unit,
     marginRight: theme.spacing.unit
   },
   otherUser: {
-    backgroundColor: "purple",
+    backgroundColor: "#6200ea",
     color: "white",
     padding: theme.spacing.unit,
     borderRadius: theme.spacing.unit
   },
   message: {
-    wordBreak: "break-all",
     display: "inline-block",
     textAlign: "left"
   },
