@@ -195,6 +195,7 @@ class Navbar extends Component {
           {auth &&
           auth.isAuthenticated &&
           chatroom &&
+          chatroom.chatrooms &&
           chatroom.chatrooms.length > 0 ? (
             chatroom.chatrooms.map(room => (
               <ListItem

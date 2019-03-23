@@ -62,7 +62,7 @@ export const logoutUser = history => dispatch => {
   setAuthToken(false);
   // Set current user to {} which will set also isAuthenticated to false
   dispatch(setCurrentUser({}));
-  history.push("/login");
+  history ? history.push("/login") : (window.location.href = "/login");
 };
 
 // FAVS DON'T WORK RIGHT PAYLOAD IS WRONG

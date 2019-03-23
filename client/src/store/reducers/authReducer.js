@@ -19,7 +19,6 @@ export default (state = initialState, action) => {
         user: action.payload
       };
     case SET_CURRENT_USER_FAVS:
-      console.log(action.payload);
       return {
         ...state,
         user: {
@@ -28,7 +27,6 @@ export default (state = initialState, action) => {
         }
       };
     case SET_CURRENT_USER_UNFAVS:
-      console.log(action.payload);
       return {
         ...state,
         user: {

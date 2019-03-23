@@ -44,4 +44,18 @@ if (process.env.NODE_ENV === "production") {
 
 const port = process.env.PORT || 5000;
 
-app.listen(port, () => console.log(`Server running on port ${port}`));
+const server = require("http").Server(app);
+const io = require("socket.io")(server);
+
+io.on("connection", function(socket) {
+  console.log("socket connected", socket.id);
+  socket.on("disconnect", () => {
+    console.log("user disconnected");
+  });
+
+  socket.on("message", chatroomName => {
+    console.log(`new message in ${chatroomName}`);
+  });
+});
+
+server.listen(port, () => console.log(`Server running on port ${port}`));

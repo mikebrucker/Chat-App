@@ -14,9 +14,11 @@ import Register from "./components/auth/Register";
 import Dashboard from "./components/dashboard/Dashboard";
 import Chatroom from "./components/chatroom/Chatroom";
 
-checkForAuthToken();
-
 class App extends Component {
+  componentDidMount() {
+    checkForAuthToken();
+  }
+
   render() {
     return (
       <MuiThemeProvider theme={theme}>

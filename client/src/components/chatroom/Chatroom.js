@@ -2,7 +2,6 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import { Redirect } from "react-router-dom";
 import PropTypes from "prop-types";
-import { withStyles } from "@material-ui/core/styles";
 import {
   getChatroomByName,
   addChatroom,
@@ -14,7 +13,9 @@ import {
   unFavoriteThisChatroom
 } from "../../store/actions/authActions";
 import Chatbox from "./Chatbox";
+import socket from "./socket";
 
+import { withStyles } from "@material-ui/core/styles";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
 import Grid from "@material-ui/core/Grid";
@@ -34,7 +35,6 @@ const styles = theme => ({
   containerContainer: {
     width: "90vw",
     backgroundColor: "white",
-    textAlign: "left",
     display: "inline-block",
     border: "4px solid #4caf50",
     borderRadius: "6px",
@@ -52,6 +52,9 @@ const styles = theme => ({
 
 class Chatroom extends Component {
   state = {
+    client: socket(),
+    user: "",
+    chatroom: "",
     text: "",
     errors: {}
   };
@@ -62,6 +65,16 @@ class Chatroom extends Component {
   }
 
   componentWillReceiveProps = nextProps => {
+    if (nextProps.chatroom && nextProps.chatroom.chatroom) {
+      this.setState({
+        chatroom: nextProps.chatroom.chatroom.name
+      });
+    }
+    if (nextProps.auth && nextProps.auth.user) {
+      this.setState({
+        user: nextProps.auth.user.username
+      });
+    }
     if (nextProps.errors) {
       this.setState({
         errors: nextProps.errors
@@ -83,8 +96,11 @@ class Chatroom extends Component {
       username: this.props.auth.user.username,
       avatar: this.props.auth.user.avatar
     };
-
-    this.props.addMessage(newMessage, this.props.chatroom.chatroom.name);
+    if (this.state.chatroom === this.props.chatroom.chatroom.name) {
+      this.props.addMessage(newMessage, this.props.chatroom.chatroom.name);
+      this.state.client.message(this.state.chatroom);
+    }
+    console.log(this.state);
     this.setState({
       text: ""
     });
