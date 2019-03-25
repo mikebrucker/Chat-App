@@ -1,6 +1,7 @@
-const io = require("socket.io-client");
+import io from "socket.io-client";
+// import { getChatroomByName } from "../../store/actions/chatroomActions";
 
-export default function() {
+export const socket = () => {
   const socket = io("http://localhost:3000", {
     transport: ["websocket"]
   });
@@ -13,6 +14,11 @@ export default function() {
     console.log(err);
   });
 
+  function recieveMessage(onRecieveMessage) {
+    socket.on("recieveMessage", onRecieveMessage);
+    console.log("client, onRecieveMessage");
+  }
+
   function join(chatroomName, cb) {
     socket.emit("join", chatroomName, cb);
   }
@@ -21,8 +27,8 @@ export default function() {
     socket.emit("leave", chatroomName, cb);
   }
 
-  function message(chatroomName) {
-    socket.emit("message", chatroomName);
+  function message(chatroomName, msg) {
+    socket.emit("sendMessage", chatroomName, msg);
   }
 
   function getChatrooms(cb) {
@@ -33,6 +39,7 @@ export default function() {
     join,
     leave,
     message,
-    getChatrooms
+    getChatrooms,
+    recieveMessage
   };
-}
+};

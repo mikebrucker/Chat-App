@@ -53,8 +53,9 @@ io.on("connection", function(socket) {
     console.log("user disconnected");
   });
 
-  socket.on("message", chatroomName => {
-    console.log(`new message in ${chatroomName}`);
+  socket.on("sendMessage", (chatroomName, msg) => {
+    socket.emit("recieveMessage", chatroomName, msg);
+    console.log(`${msg.text} sent in ${chatroomName}`);
   });
 });
 

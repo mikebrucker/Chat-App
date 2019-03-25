@@ -1,4 +1,5 @@
 import axios from "axios";
+
 import {
   ADD_CHATROOM,
   GET_CHATROOM,
@@ -36,15 +37,13 @@ export const getChatroomByName = chatroomname => dispatch => {
     .then(res =>
       dispatch({
         type: GET_CHATROOM,
-        payload: res.data,
-        prevSearch: chatroomname
+        payload: res.data
       })
     )
     .catch(err =>
       dispatch({
         type: GET_CHATROOM,
         payload: null,
-        prevSearch: chatroomname,
         errors: err.response.data
       })
     );

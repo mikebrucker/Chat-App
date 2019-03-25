@@ -35,7 +35,6 @@ export default (state = initialState, action) => {
       return {
         ...state,
         chatroom: action.payload,
-        prevSearch: action.prevSearch,
         errors: action.errors,
         loading: false
       };

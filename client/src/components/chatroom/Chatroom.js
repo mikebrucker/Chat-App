@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import { Redirect } from "react-router-dom";
 import PropTypes from "prop-types";
 import {
   getChatroomByName,
@@ -13,7 +12,7 @@ import {
   unFavoriteThisChatroom
 } from "../../store/actions/authActions";
 import Chatbox from "./Chatbox";
-import socket from "./socket";
+import { socket } from "./socket";
 
 import { withStyles } from "@material-ui/core/styles";
 import TextField from "@material-ui/core/TextField";
@@ -62,6 +61,7 @@ class Chatroom extends Component {
   componentDidMount() {
     this.props.getChatroomByName(this.props.match.params.chatroom);
     this.props.getChatrooms();
+    this.state.client.recieveMessage(this.getThisChatroom);
   }
 
   componentWillReceiveProps = nextProps => {
@@ -82,6 +82,11 @@ class Chatroom extends Component {
     }
   };
 
+  getThisChatroom = () => {
+    this.props.getChatroomByName(this.props.match.params.chatroom);
+    this.props.getChatrooms();
+  };
+
   onChange = e => {
     this.setState({
       [e.target.name]: e.target.value
@@ -98,7 +103,7 @@ class Chatroom extends Component {
     };
     if (this.state.chatroom === this.props.chatroom.chatroom.name) {
       this.props.addMessage(newMessage, this.props.chatroom.chatroom.name);
-      this.state.client.message(this.state.chatroom);
+      this.state.client.message(this.state.chatroom, newMessage, this.props);
     }
     console.log(this.state);
     this.setState({
@@ -134,12 +139,13 @@ class Chatroom extends Component {
   render() {
     const { auth, classes, chatroom } = this.props;
     const { errors } = this.state;
-    if (!auth.isAuthenticated) return <Redirect to="/login" />;
 
     const isFavorite =
       auth &&
       chatroom &&
       chatroom.chatroom &&
+      auth.user &&
+      auth.user.favorites &&
       auth.user.favorites.filter(fav => {
         return fav.name === chatroom.chatroom.name;
       }).length > 0 ? (
@@ -206,7 +212,11 @@ class Chatroom extends Component {
         <div>Loading...</div>
       );
 
-    return <div className={classes.root}>{showChatroom}</div>;
+    return auth && auth.isAuthenticated ? (
+      <div className={classes.root}>{showChatroom}</div>
+    ) : (
+      <div className={classes.root}>Please Log in</div>
+    );
   }
 }
 
@@ -214,10 +224,11 @@ Chatroom.propTypes = {
   auth: PropTypes.object.isRequired,
   classes: PropTypes.object.isRequired,
   getChatroomByName: PropTypes.func.isRequired,
+  getChatrooms: PropTypes.func.isRequired,
   addChatroom: PropTypes.func.isRequired,
   addMessage: PropTypes.func.isRequired,
   favoriteThisChatroom: PropTypes.func.isRequired,
-  getChatrooms: PropTypes.func.isRequired
+  unFavoriteThisChatroom: PropTypes.func.isRequired
 };
 
 const mapStateToProps = state => ({
